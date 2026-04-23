@@ -5,7 +5,7 @@ import { Subtitle, Title } from "@/components/Typography";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "expo-router";
 import { useState } from "react";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 
 export default function Index() {
   const [email, setEmail] = useState("");
@@ -13,6 +13,11 @@ export default function Index() {
   const { session, login, logout } = useAuth();
 
   const handleLogin = () => {
+    if (!email.trim() || !password.trim()) {
+      Alert.alert("Missing information", "Enter both email and password.");
+      return;
+    }
+
     login(email);
     setEmail("");
     setPassword("");
