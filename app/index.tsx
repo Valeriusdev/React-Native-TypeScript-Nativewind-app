@@ -12,19 +12,29 @@ export default function Index() {
   const [password, setPassword] = useState("");
   const { session, login, logout } = useAuth();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
       Alert.alert("Missing information", "Enter both email and password.");
       return;
     }
 
-    login(email);
-    setEmail("");
-    setPassword("");
+    try {
+      await login(email);
+      setEmail("");
+      setPassword("");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to log in right now.";
+      Alert.alert("Login failed", message);
+    }
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to log out right now.";
+      Alert.alert("Logout failed", message);
+    }
   };
 
   return (
