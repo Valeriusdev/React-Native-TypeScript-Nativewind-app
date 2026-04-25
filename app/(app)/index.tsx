@@ -25,6 +25,9 @@ export default function Index() {
         <Title className="mb-2 text-center">Welcome Back</Title>
 
         <Subtitle className="text-center mb-8">{session?.user.email}</Subtitle>
+        <Link href="/profile" className="text-center text-blue-600 font-semibold mb-4">
+          View Profile
+        </Link>
         <Button onPress={handleLogout} label="Log Out" />
 
         <Link href="/about">About</Link>
