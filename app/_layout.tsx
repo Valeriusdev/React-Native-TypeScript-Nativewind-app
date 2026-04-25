@@ -14,7 +14,7 @@ const App = () => {
   const { session } = useAuth();
 
   return (
-    <Stack>
+    <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={!session}>
         <Stack.Screen name="(public)" />
       </Stack.Protected>
