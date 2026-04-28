@@ -19,7 +19,7 @@ export default function Index() {
     }
 
     try {
-      await login(email);
+      await login(email, password);
       setEmail("");
       setPassword("");
     } catch (error) {
