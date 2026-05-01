@@ -5,6 +5,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 type AuthContextValue = {
   session: Session | null;
   login: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
   initializing: boolean;
 };
@@ -48,7 +49,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  return <AuthContext.Provider value={{ session, login, logout, initializing }}>{children}</AuthContext.Provider>;
+  const signup = async (email: string, password: string, name: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { name },
+      },
+    });
+
+    if (error) {
+      throw error;
+    }
+  };
+
+  return <AuthContext.Provider value={{ session, login, logout, initializing, signup }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
