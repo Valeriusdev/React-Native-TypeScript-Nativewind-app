@@ -1,8 +1,8 @@
 import { Button } from "@/components/Button";
+import { Link } from "@/components/Link";
 import { Screen } from "@/components/Screen";
 import { Subtitle, Title } from "@/components/Typography";
 import { useAuth } from "@/contexts/AuthContext";
-import { Link } from "expo-router";
 import { Alert, View } from "react-native";
 
 export default function Index() {
@@ -22,10 +22,10 @@ export default function Index() {
       {/* Container */}
       <View className="w-full bg-white rounded-2xl shadow-lg p-8">
         {/* Header */}
-        <Title className="mb-2 text-center">Welcome Back</Title>
+        <Title className="mb-2 text-center">Welcome Back, {session?.user.user_metadata.name}</Title>
 
         <Subtitle className="text-center mb-8">{session?.user.email}</Subtitle>
-        <Link href="/profile" className="text-center text-blue-600 font-semibold mb-4">
+        <Link href="/profile" className="text-center mb-4">
           View Profile
         </Link>
         <Button onPress={handleLogout} label="Log Out" />

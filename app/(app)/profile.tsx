@@ -1,8 +1,8 @@
 import { Button } from "@/components/Button";
+import { Link } from "@/components/Link";
 import { Screen } from "@/components/Screen";
 import { Body, Subtitle, Title } from "@/components/Typography";
 import { useAuth } from "@/contexts/AuthContext";
-import { Link } from "expo-router";
 import { Alert, View } from "react-native";
 
 export default function ProfileScreen() {
@@ -36,9 +36,7 @@ export default function ProfileScreen() {
         </View>
 
         <Button className="mt-8" onPress={handleLogout} label="Log Out" />
-        <Link href="/" className="mt-8 text-blue-600 font-semibold">
-          Back to Home
-        </Link>
+        <Link href="/" className="mt-8">Back to Home</Link>
       </View>
     </Screen>
   );
