@@ -4,6 +4,7 @@ import { Link } from "@/components/Link";
 import { Screen } from "@/components/Screen";
 import { Subtitle, Title } from "@/components/Typography";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
 import { useState } from "react";
 import { Alert, View } from "react-native";
 
@@ -26,6 +27,11 @@ export default function Index() {
       const message = error instanceof Error ? error.message : "Unable to log in right now.";
       Alert.alert("Login failed", message);
     }
+  };
+
+  const fetchMovies = async () => {
+    let { data: movies, error } = await supabase.from("movies").select("*");
+    console.log(movies, error);
   };
 
   return (
@@ -52,6 +58,7 @@ export default function Index() {
 
         {/* Login Button */}
         <Button onPress={handleLogin} label="Sign In" />
+        <Button onPress={fetchMovies} label="fetch movies" />
 
         <View className="mt-4 items-center">
           <Link href="/signup">Create an account</Link>
