@@ -3,7 +3,7 @@ import { Link } from "@/components/Link";
 import { Screen } from "@/components/Screen";
 import { Subtitle, Title } from "@/components/Typography";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase";
+import { addMovie, getMovies } from "@/db/movies";
 import { Alert, View } from "react-native";
 
 export default function Index() {
@@ -13,23 +13,28 @@ export default function Index() {
     try {
       await logout();
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Unable to log out right now.";
+      const message = error instanceof Error ? error.message : "Unable to log out right now.";
       Alert.alert("Logout failed", message);
     }
   };
 
   const fetchMovies = async () => {
-    let { data: movies, error } = await supabase.from("movies").select("*");
-    console.log(movies, error);
+    try {
+      const movies = await getMovies();
+      console.log(movies);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to fetch movies right now.";
+      Alert.alert("Fetch failed", message);
+    }
   };
 
   const insertMovie = async () => {
-    let { error } = await supabase.from("movies").insert({
-      name: "Sample Movie",
-      description: "This is a sample description.",
-    });
-    console.log(error);
+    try {
+      await addMovie("Movie Title", "Movie description");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to insert movie right now.";
+      Alert.alert("Insert failed", message);
+    }
   };
 
   return (
@@ -37,9 +42,7 @@ export default function Index() {
       {/* Container */}
       <View className="w-full bg-white rounded-2xl shadow-lg p-8">
         {/* Header */}
-        <Title className="mb-2 text-center">
-          Welcome Back, {session?.user.user_metadata.name}
-        </Title>
+        <Title className="mb-2 text-center">Welcome Back, {session?.user.user_metadata.name}</Title>
 
         <Subtitle className="text-center mb-8">{session?.user.email}</Subtitle>
         <Link href="/profile" className="text-center mb-4">
