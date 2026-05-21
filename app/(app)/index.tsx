@@ -3,11 +3,13 @@ import { Link } from "@/components/Link";
 import { Screen } from "@/components/Screen";
 import { Subtitle, Title } from "@/components/Typography";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase";
+import { addMovie, getMovies } from "@/db/movies";
+import { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
 
 export default function Index() {
   const { session, logout } = useAuth();
+  const [movieCount, setMovieCount] = useState<number | null>(null);
 
   const handleLogout = async () => {
     try {
@@ -19,17 +21,34 @@ export default function Index() {
     }
   };
 
-  const fetchMovies = async () => {
-    let { data: movies, error } = await supabase.from("movies").select("*");
-    console.log(movies, error);
+  const loadMovies = async () => {
+    try {
+      const movies = await getMovies();
+      setMovieCount(movies.length);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Unable to fetch movies right now.";
+      Alert.alert("Fetch failed", message);
+    }
   };
 
+  useEffect(() => {
+    loadMovies();
+  }, []);
+
   const insertMovie = async () => {
-    let { error } = await supabase.from("movies").insert({
-      name: "Sample Movie",
-      description: "This is a sample description.",
-    });
-    console.log(error);
+    try {
+      await addMovie("Movie Title", "Movie description");
+      await loadMovies();
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Unable to insert movie right now.";
+      Alert.alert("Insert failed", message);
+    }
   };
 
   return (
@@ -42,10 +61,12 @@ export default function Index() {
         </Title>
 
         <Subtitle className="text-center mb-8">{session?.user.email}</Subtitle>
+        <Subtitle className="text-center mb-4">
+          {movieCount === null ? "Loading movies..." : `${movieCount} movies`}
+        </Subtitle>
         <Link href="/profile" className="text-center mb-4">
           View Profile
         </Link>
-        <Button onPress={fetchMovies} label="fetch movies" />
         <Button onPress={insertMovie} label="insert movie" />
         <Button onPress={handleLogout} label="Log Out" />
 
