@@ -1,6 +1,8 @@
 import { supabase } from "@/lib/supabase";
 
 export async function getMovies() {
+  console.log("getting movies");
+
   const { data, error } = await supabase.from("movies").select("*");
   if (error) {
     throw new Error(error.message);
@@ -9,8 +11,10 @@ export async function getMovies() {
   return data;
 }
 
-export async function addMovie(name: string, description: string) {
-  const { error } = await supabase.from("movies").insert({ name, description });
+export async function addMovie(movie: any) {
+  const { error } = await supabase
+    .from("movies")
+    .insert({ name: movie.name, description: movie.description });
 
   if (error) {
     throw new Error(error.message);

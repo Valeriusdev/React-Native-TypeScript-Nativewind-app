@@ -3,13 +3,16 @@ import { Link } from "@/components/Link";
 import { Screen } from "@/components/Screen";
 import { Body, Subtitle, Title } from "@/components/Typography";
 import { useAuth } from "@/contexts/AuthContext";
-import { addMovie, getMovies } from "@/db/movies";
-import { useEffect, useState } from "react";
+import { useInsertMovie } from "@/db/mutations";
+import { useMovies } from "@/db/queries";
+
 import { Alert, View } from "react-native";
 
 export default function ProfileScreen() {
   const { session, logout } = useAuth();
-  const [movieCount, setMovieCount] = useState<number | null>(null);
+
+  const { data } = useMovies();
+  const { mutateAsync } = useInsertMovie();
 
   const handleLogout = async () => {
     try {
@@ -21,27 +24,12 @@ export default function ProfileScreen() {
     }
   };
 
-  const loadMovies = async () => {
-    try {
-      const movies = await getMovies();
-      setMovieCount(movies.length);
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Unable to fetch movies right now.";
-      Alert.alert("Fetch failed", message);
-    }
-  };
-
-  useEffect(() => {
-    loadMovies();
-  }, []);
-
   const insertMovie = async () => {
     try {
-      await addMovie("Movie Title", "Movie description");
-      await loadMovies();
+      await mutateAsync({
+        name: "Movie title",
+        description: "Movie description",
+      });
     } catch (error) {
       const message =
         error instanceof Error
@@ -71,9 +59,9 @@ export default function ProfileScreen() {
           <View>
             <Subtitle className="mb-1">Movies</Subtitle>
             <Body>
-              {movieCount === null
+              {data?.length === null
                 ? "Loading movies..."
-                : `${movieCount} movies`}
+                : `${data?.length} movies`}
             </Body>
           </View>
         </View>
