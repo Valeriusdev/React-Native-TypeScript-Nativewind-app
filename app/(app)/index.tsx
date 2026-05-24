@@ -8,8 +8,8 @@ import { useMovies, useUser } from "@/db/queries";
 import { Alert, View } from "react-native";
 
 export default function Index() {
-  const { session, logout } = useAuth();
-  const { data: user } = useUser();
+  const { logout } = useAuth();
+  const { data: user, isLoading } = useUser();
 
   console.log(user);
 
@@ -34,14 +34,22 @@ export default function Index() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <Screen style={{ alignItems: "center", justifyContent: "center" }}>
+        <Title>Loading</Title>
+      </Screen>
+    );
+  }
+
   return (
     <Screen className="justify-center items-center px-6">
       {/* Container */}
       <View className="w-full bg-white rounded-2xl shadow-lg p-8">
         {/* Header */}
-        <Title className="mb-2 text-center">Welcome Back, {session?.user.user_metadata.name}</Title>
+        <Title className="mb-2 text-center">Welcome Back, {user?.name}</Title>
 
-        <Subtitle className="text-center mb-8">{session?.user.email}</Subtitle>
+        <Subtitle className="text-center mb-8">{user?.email}</Subtitle>
         <Subtitle className="text-center mb-4">{data === null ? "Loading movies..." : `${data?.length} movies`}</Subtitle>
         <Link href="/profile" className="text-center mb-4">
           View Profile
