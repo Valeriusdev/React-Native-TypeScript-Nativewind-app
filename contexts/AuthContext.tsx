@@ -20,10 +20,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, nextSession) => {
-        console.log(event, !!nextSession);
-        setSession(nextSession);
-        setInitializing(false);
-      });
+      console.log(event, !!nextSession);
+      setSession(nextSession);
+      setInitializing(false);
+    });
 
     return () => {
       subscription.unsubscribe();
@@ -61,13 +61,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) {
       throw error;
     }
+    if (data.user?.email) {
+      const { error: insertError } = await supabase
+        .from("users")
+        .insert({ id: data.user.id, email: data.user.email, name: data.user.user_metadata.name });
 
-    const { error: insertError } = await supabase
-      .from("users")
-      .insert({ id: data.user?.id, email: data.user?.email, name: data.user?.user_metadata.name });
-
-    if (insertError) {
-      throw insertError;
+      if (insertError) {
+        throw insertError;
+      }
     }
   };
 
