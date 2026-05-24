@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { Session } from "@supabase/supabase-js";
+import { useQueryClient } from "@tanstack/react-query";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
 type AuthContextValue = {
@@ -15,20 +16,27 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [initializing, setInitializing] = useState(true);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, nextSession) => {
       console.log(event, !!nextSession);
-      setSession(nextSession);
+      if (nextSession) {
+        setSession(nextSession);
+      } else {
+        setSession(null);
+        queryClient.clear();
+      }
+
       setInitializing(false);
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [queryClient]);
 
   const login = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
