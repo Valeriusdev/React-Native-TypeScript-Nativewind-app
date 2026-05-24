@@ -4,11 +4,14 @@ import { Screen } from "@/components/Screen";
 import { Subtitle, Title } from "@/components/Typography";
 import { useAuth } from "@/contexts/AuthContext";
 import { useInsertMovie } from "@/db/mutations";
-import { useMovies } from "@/db/queries";
+import { useMovies, useUser } from "@/db/queries";
 import { Alert, View } from "react-native";
 
 export default function Index() {
   const { session, logout } = useAuth();
+  const { data: user } = useUser();
+
+  console.log(user);
 
   const { data } = useMovies();
   const { mutateAsync } = useInsertMovie();
