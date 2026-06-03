@@ -11,7 +11,7 @@ export default function Index() {
   const { logout } = useAuth();
   const { data: user, isLoading } = useUser();
 
-  console.log(user);
+  console.log("user", user);
 
   const { data } = useMovies();
   const { mutateAsync } = useInsertMovie();
@@ -42,14 +42,22 @@ export default function Index() {
     );
   }
 
+  if (!user) {
+    return (
+      <Screen style={{ alignItems: "center", justifyContent: "center" }}>
+        <Title>No user found</Title>
+      </Screen>
+    );
+  }
+
   return (
     <Screen className="justify-center items-center px-6">
       {/* Container */}
       <View className="w-full bg-white rounded-2xl shadow-lg p-8">
         {/* Header */}
-        <Title className="mb-2 text-center">Welcome Back, {user?.name}</Title>
+        <Title className="mb-2 text-center">Welcome Back, {user.name}</Title>
 
-        <Subtitle className="text-center mb-8">{user?.email}</Subtitle>
+        <Subtitle className="text-center mb-8">{user.email}</Subtitle>
         <Subtitle className="text-center mb-4">{data === null ? "Loading movies..." : `${data?.length} movies`}</Subtitle>
         <Link href="/profile" className="text-center mb-4">
           View Profile

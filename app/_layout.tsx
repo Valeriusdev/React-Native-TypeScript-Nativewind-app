@@ -17,9 +17,10 @@ export default function RootLayout() {
 
 const App = () => {
   const { session, initializing } = useAuth();
+  console.log("the start!");
 
   if (initializing) return null;
-
+  console.log("done init");
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={!session}>
