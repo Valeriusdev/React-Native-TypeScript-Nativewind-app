@@ -1,4 +1,3 @@
-import { getUser } from "@/db/user";
 import { supabase } from "@/lib/supabase";
 import { Session } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
@@ -23,24 +22,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, nextSession) => {
-      setTimeout(async () => {
-        console.log(event, !!nextSession);
-        if (nextSession) {
-          try {
-            const user = await getUser();
-            queryClient.setQueryData(["user"], user);
-          } catch (error) {
-            console.error("Unable to load user after auth change", error);
-          }
+      console.log(event, !!nextSession);
+      if (nextSession) {
+        setSession(nextSession);
+      } else {
+        setSession(null);
+        queryClient.clear();
+      }
 
-          setSession(nextSession);
-        } else {
-          setSession(null);
-          queryClient.clear();
-        }
-
-        setInitializing(false);
-      });
+      setInitializing(false);
     });
 
     return () => {
