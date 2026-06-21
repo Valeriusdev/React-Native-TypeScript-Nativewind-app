@@ -1,15 +1,18 @@
 import { Button } from "@/components/Button";
+import { FormInput } from "@/components/FormInput";
 import { Link } from "@/components/Link";
 import { Screen } from "@/components/Screen";
 import { Subtitle, Title } from "@/components/Typography";
 import { useAuth } from "@/contexts/AuthContext";
 import { useInsertMovie } from "@/db/mutations";
 import { useMovies, useUser } from "@/db/queries";
+import { useState } from "react";
 import { Alert, View } from "react-native";
 
 export default function Index() {
   const { logout } = useAuth();
   const { data: user, isLoading } = useUser();
+  const [friendId, setFriendId] = useState("");
 
   console.log("user", user);
 
@@ -62,6 +65,16 @@ export default function Index() {
         <Link href="/profile" className="text-center mb-4">
           View Profile
         </Link>
+        <View className="mb-4">
+          <FormInput
+            label="Friend ID"
+            placeholder="Friend user ID"
+            value={friendId}
+            onChangeText={setFriendId}
+            autoCapitalize="none"
+          />
+          <Button label="Add Friend" />
+        </View>
         <Button onPress={insertMovie} label="insert movie" />
         <Button onPress={handleLogout} label="Log Out" />
 
