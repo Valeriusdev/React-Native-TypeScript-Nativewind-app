@@ -4,20 +4,17 @@ import { Link } from "@/components/Link";
 import { Screen } from "@/components/Screen";
 import { Subtitle, Title } from "@/components/Typography";
 import { useAuth } from "@/contexts/AuthContext";
-import { useInsertMovie } from "@/db/mutations";
-import { useMovies, useUser } from "@/db/queries";
+import { useFriends, useUser } from "@/db/queries";
 import { useState } from "react";
 import { Alert, View } from "react-native";
 
 export default function Index() {
   const { logout } = useAuth();
   const { data: user, isLoading } = useUser();
+  const { data: friends } = useFriends();
   const [friendId, setFriendId] = useState("");
 
   console.log("user", user);
-
-  const { data } = useMovies();
-  const { mutateAsync } = useInsertMovie();
 
   const handleLogout = async () => {
     try {
@@ -25,15 +22,6 @@ export default function Index() {
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unable to log out right now.";
       Alert.alert("Logout failed", message);
-    }
-  };
-
-  const insertMovie = async () => {
-    try {
-      await mutateAsync({ name: "Movie title", description: "Movie description" });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unable to insert movie right now.";
-      Alert.alert("Insert failed", message);
     }
   };
 
@@ -61,7 +49,7 @@ export default function Index() {
         <Title className="mb-2 text-center">Welcome Back, {user.name}</Title>
 
         <Subtitle className="text-center mb-8">{user.email}</Subtitle>
-        <Subtitle className="text-center mb-4">{data === null ? "Loading movies..." : `${data?.length} movies`}</Subtitle>
+        <Subtitle className="text-center mb-4">Friends: {friends?.length ?? 0}</Subtitle>
         <Link href="/profile" className="text-center mb-4">
           View Profile
         </Link>
@@ -75,7 +63,6 @@ export default function Index() {
           />
           <Button label="Add Friend" />
         </View>
-        <Button onPress={insertMovie} label="insert movie" />
         <Button onPress={handleLogout} label="Log Out" />
 
         <Link href="/about">About</Link>
